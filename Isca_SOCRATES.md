@@ -5,7 +5,9 @@ This guide is intended to get you up-and-running with Isca and the SOCRATES
 radiation code on BlueCrystal Phase 4 (BCP4). It assumes that you are starting
 with a default (unmodified) user environment on BCP4. 
 
-If you have any questions please feel free to email Will (w.seviour@bristol.ac.uk).
+If you have any questions please feel free to email Will
+(w.seviour@bristol.ac.uk). Also please let me know if there are any mistakes in
+this guide, either by email or raising an issue on this Github page.
 
 
 
@@ -116,8 +118,9 @@ To track the progress:
 (isca_env) $ tail -f slurm_*.o
 ```
 
-All being well, after about 20 minutes the job should complete, and you'll find 
-some output files in `/mnt/storage/home/$USER/scratch/Isca_data`. :+1:
+You can also check on the job status with the command `sbatch -u $USER`. All
+being well, after about 20 minutes the job should complete, and you'll find some
+output files in `/mnt/storage/home/$USER/scratch/Isca_data`. :+1:
 
 
 ## Switching to Mars banch and adding SOCRATES
@@ -148,7 +151,7 @@ There should now be a directory called `trunk`, which contains the SOCRATES
 code.
 
 
-## Running Mars SOCRATES
+## Running basic Mars SOCRATES
 
 We'll now attempt to run a Mars with SOCRATES simulation. To do this, we need to
 create a run script. The file `~/Isca/exp/site-specific/isca_slurm_job.sh` which
@@ -190,4 +193,61 @@ source activate isca_env
 $HOME/.conda/envs/isca_env/bin/python $GFDL_BASE/exp/socrates_mars/socrates_mars.py
 ```
 
+Again, press `Cntrl-O` to save then `Cntrl-X` to quit nano.
+
+To run this job then do: 
+
+```{bash}
+(isca_env) $ sbatch mars_socrates.sh
+```
+
+This sets up a simulation which lasts for 12 hours, and should produce about 36
+months of output data. You can find the output in directory
+`$GFDL_DATA/soc_mars_mk36_per_value70.85_none_mld_2.0_with_mola_topo/`
+
+
+
+## Editing Isca simulation scripts
+
+The bulk of the configuration of Isca simulations is done within the python run
+scripts. There are many things that can be changed here, so I'll just mention a
+few of the more common ones.
+
+First open the run script in your favourite editor (the example uses nano, which
+is simple, but I'd recommend learning something with more functionality like vi
+or emacs):
+
+```{bash}
+(isca_env) $ nano ~/Isca/exp/socrates_mars/socrates_mars.py
+```
+
+On line 27 (starting `inputfiles = `) the necessary input data files are
+set. These are the Mars longwave and shortwave spectral files, and the solar
+spectral files needed for SOCRATES. You can find more information about these
+files [here](https://simplex.giss.nasa.gov/gcm/ROCKE-3D/Spectralfiles.html), and
+download additional ones [here](https://portal.nccs.nasa.gov/GISS_modelE/ROCKE-3D/).
+
+The lines beginning `diag.add_field` determine the model diagnostics that are
+saved out. To see some examples of other diagnostics that can be added look at
+other examples in `Isca/exp/test_cases/`.
+
+The parameters under `socrates_rad_nml` set the inputs to SOCRATES. These
+include gas mixing ratios, solar constant, and the spectral files,
+
+Parameters under `astronomy_nml` and `constants_nml` set many of the orbital and
+planetary parameters.
+
+Under the line `if __name__ =="__main__":` the actual simulation is set up. This
+includes the experiment name. Some further parameters are listed here, such as
+surface pressure (note this is in different units for different aspects of the
+model!), as well as $g$.
+
+The simulation is run in the lines beginning `exp.run`. By default, this will
+run a new simulation from scratch (though it will not overwrite existing
+data). It is possible to specify a restart file as follows. In doing so, you can
+extend a previous simulation.
+
+```{bash}
+exp.run(1, use_restart=True, restart_file=/path/to/restart/file, num_cores=NCORES)
+``
 
