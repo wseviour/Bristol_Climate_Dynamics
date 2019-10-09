@@ -249,5 +249,5 @@ extend a previous simulation.
 
 ```{bash}
 exp.run(1, use_restart=True, restart_file=/path/to/restart/file, num_cores=NCORES)
-``
+```
 
