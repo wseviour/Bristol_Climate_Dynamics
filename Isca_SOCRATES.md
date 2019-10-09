@@ -247,7 +247,7 @@ run a new simulation from scratch (though it will not overwrite existing
 data). It is possible to specify a restart file as follows. In doing so, you can
 extend a previous simulation.
 
-```{bash}
+```{python}
 exp.run(1, use_restart=True, restart_file=/path/to/restart/file, num_cores=NCORES)
 ```
 
