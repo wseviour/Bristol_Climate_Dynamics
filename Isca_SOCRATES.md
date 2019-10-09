@@ -93,7 +93,7 @@ export GFDL_WORK=/mnt/storage/home/$USER/scratch/Isca_work
 export GFDL_DATA=/mnt/storage/home/$USER/scratch/Isca_data
 ```
 
-Press Cntrl-O to save, then Cntrl-X to quit nano. Then make the `Isca_work` and
+Press `Cntrl-O` to save, then `Cntrl-X` to quit nano. Then make the `Isca_work` and
 `Isca_data` directories:
 
 ```{bash}
@@ -120,8 +120,74 @@ All being well, after about 20 minutes the job should complete, and you'll find
 some output files in `/mnt/storage/home/$USER/scratch/Isca_data`. :+1:
 
 
-## Adding SOCRATES
+## Switching to Mars banch and adding SOCRATES
 
 The SOCRATES radiation code is maintained by the Met Office, and so not bundled
-as a part of Isca.
+as a part of Isca. There are also a few changes to the standard Isca code needed
+in order to run Mars simulation and for compatibility with SOCRATES. The best
+way to get these is to checkout my Git branch. To do so, type the following
+commands:
+
+```{bash}
+(isca_env) $ git remote add Will https://github.com/wseviour/Isca
+(isca_env) $ git fetch Will
+(isca_env) $ git checkout -b uob_mars_dev Will/uob_mars_dev
+```
+
+Next we'll have to get the SOCRATES code. I have this on Dropbox, so you can
+just download it as follows:
+
+```{bash}
+(isca_env) $ cd ~/Isca/src/atmos_param/socrates/src/
+(isca_env) $ wget https://www.dropbox.com/s/q2s5jfpddrtbkh4/trunk.zip?dl=0
+(isca_env) $ unzip "trunk.zip?dl=0"
+(isca_env) $ rm "trunk.zip?dl=0"
+```
+
+There should now be a directory called `trunk`, which contains the SOCRATES
+code.
+
+
+## Running Mars SOCRATES
+
+We'll now attempt to run a Mars with SOCRATES simulation. To do this, we need to
+create a run script. The file `~/Isca/exp/site-specific/isca_slurm_job.sh` which
+we ran earlier (for the Held-Suarez case) is an example of this. It is best
+practice to make a new directory outside of the `~/Isca` directory in which to
+host run scripts.
+
+```{bash}
+(isca_env) $ cd $HOME
+(isca_env) $ mkdir Isca_jobs
+(isca_env) $ cd Isca_jobs
+(isca_env) $ nano mars_socrates.sh
+```
+
+Then copy and paste the following:
+
+```{bash}
+#!/bin/bash -l
+
+#SBATCH --job-name=socrates_mars
+#SBATCH --partition=cpu
+#SBATCH --time=12:00:00
+#SBATCH --nodes=1
+#number of tasks ~ processes per node
+#SBATCH --ntasks-per-node=16
+#number of cpus (cores) per task (process)
+#SBATCH --cpus-per-task=1
+#SBATCH --output=slurm_%j.o
+
+echo Running on host `hostname`
+echo Time is `date`
+echo Directory is `pwd`
+
+module purge
+source $HOME/.bashrc
+source $GFDL_BASE/src/extra/env/bristol-bc4
+source activate isca_env
+
+$HOME/.conda/envs/isca_env/bin/python $GFDL_BASE/exp/socrates_mars/socrates_mars.py
+```
+
 
