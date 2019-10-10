@@ -17,7 +17,11 @@ First create an account on [Github](https://github.com/) (if you don't already
 have one). This is free.
 
 Now we want to set up passwordless ssh to Github. You can follow [these
-steps](https://help.github.com/en/articles/connecting-to-github-with-ssh)
+steps](https://help.github.com/en/articles/connecting-to-github-with-ssh). Alternatively,
+you could just use http to connect to Github (it just means you'll have to put
+in your username and password each time). To do so, just replace commands below
+so that `git@github.com:gh_username/Isca.git` becomes
+`https://github.com/gh_username/Isca.git` etc.
 
 Now navigate to the [main Isca
 repository](https://github.com/ExeClim/Isca). Click on the 'Fork' button in the
