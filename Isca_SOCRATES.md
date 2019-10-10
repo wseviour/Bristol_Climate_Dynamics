@@ -16,6 +16,9 @@ this guide, either by email or raising an issue on this Github page.
 First create an account on [Github](https://github.com/) (if you don't already
 have one). This is free.
 
+Now we want to set up passwordless ssh to Github. You can follow [these
+steps](https://help.github.com/en/articles/connecting-to-github-with-ssh)
+
 Now navigate to the [main Isca
 repository](https://github.com/ExeClim/Isca). Click on the 'Fork' button in the
 upper right hand corner.
@@ -120,7 +123,7 @@ To track the progress:
 
 You can also check on the job status with the command `sbatch -u $USER`. All
 being well, after about 20 minutes the job should complete, and you'll find some
-output files in `/mnt/storage/home/$USER/scratch/Isca_data`. :+1:
+output files in `/mnt/storage/home/$USER/scratch/Isca_data`. :clap:
 
 
 ## Switching to Mars banch and adding SOCRATES
